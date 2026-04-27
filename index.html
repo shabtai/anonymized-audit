@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Six Methodological Flaws in a Single-Cell Treatment-Response Predictor</title>
+  <style>
+    :root {
+      --text: #1a1a2e;
+      --muted: #555;
+      --accent: #c0392b;
+      --accent-light: #f9ebea;
+      --border: #e0e0e0;
+      --bg: #ffffff;
+      --code-bg: #f4f4f4;
+      --tag-moderate: #e67e22;
+      --tag-critical: #c0392b;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: Georgia, 'Times New Roman', serif;
+      font-size: 18px;
+      line-height: 1.75;
+      color: var(--text);
+      background: var(--bg);
+    }
+    .container {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 60px 24px 100px;
+    }
+    header {
+      border-bottom: 2px solid var(--text);
+      padding-bottom: 32px;
+      margin-bottom: 40px;
+    }
+    .site-name {
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 32px;
+    }
+    h1 {
+      font-size: 2.1rem;
+      line-height: 1.25;
+      font-weight: normal;
+      margin-bottom: 16px;
+    }
+    .meta {
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-size: 14px;
+      color: var(--muted);
+    }
+    .meta a { color: var(--muted); }
+    .lede {
+      font-size: 1.15rem;
+      color: #333;
+      border-left: 4px solid var(--accent);
+      padding-left: 20px;
+      margin: 36px 0;
+      font-style: italic;
+    }
+    h2 {
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin: 56px 0 20px;
+      color: var(--text);
+    }
+    h3 {
+      font-size: 1.25rem;
+      font-weight: normal;
+      margin: 40px 0 12px;
+      color: var(--text);
+    }
+    p { margin-bottom: 18px; }
+    .finding {
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 28px 32px;
+      margin: 36px 0;
+      background: #fafafa;
+    }
+    .finding-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+    .finding-number {
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      white-space: nowrap;
+      padding-top: 3px;
+    }
+    .finding h3 {
+      margin: 0 0 4px;
+      font-size: 1.15rem;
+      font-weight: bold;
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+    }
+    .severity-tag {
+      display: inline-block;
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      border-radius: 3px;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+    .severity-moderate {
+      background: #fef3e2;
+      color: #b7680a;
+      border: 1px solid #f0c070;
+    }
+    .finding p { margin-bottom: 12px; font-size: 0.97rem; }
+    .finding p:last-child { margin-bottom: 0; }
+    code {
+      font-family: 'SFMono-Regular', Consolas, monospace;
+      font-size: 0.85em;
+      background: var(--code-bg);
+      padding: 2px 5px;
+      border-radius: 3px;
+    }
+    .impact-box {
+      background: #fff8f8;
+      border: 1px solid #f5c6c6;
+      border-left: 4px solid var(--accent);
+      border-radius: 4px;
+      padding: 24px 28px;
+      margin: 48px 0;
+    }
+    .impact-box h2 { margin-top: 0; }
+    .impact-box p { font-size: 0.97rem; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-size: 14px;
+      margin: 32px 0;
+    }
+    th {
+      text-align: left;
+      border-bottom: 2px solid var(--text);
+      padding: 8px 12px;
+      font-weight: 700;
+    }
+    td {
+      border-bottom: 1px solid var(--border);
+      padding: 8px 12px;
+      vertical-align: top;
+    }
+    tr:last-child td { border-bottom: none; }
+    .impact-moderate { color: var(--tag-moderate); font-weight: 700; }
+    blockquote {
+      border-left: 3px solid var(--border);
+      margin: 24px 0;
+      padding-left: 20px;
+      color: var(--muted);
+      font-style: italic;
+      font-size: 0.97rem;
+    }
+    footer {
+      margin-top: 80px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-size: 13px;
+      color: var(--muted);
+    }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .disclaimer {
+      background: #f8f8f8;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 16px 20px;
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-size: 13px;
+      color: var(--muted);
+      margin: 48px 0 0;
+    }
+  </style>
+  <script data-goatcounter="https://natural-joints.goatcounter.com/count"
+          async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <div class="site-name">Anonymized Example Audit</div>
+    <h1>Six Methodological Flaws in a Single-Cell Treatment-Response Predictor</h1>
+    <div class="meta">Anonymized example · 2026</div>
+  </header>
+
+  <p class="lede">
+    The pipeline reports an AUC of ~0.84 for predicting which patients will respond to therapy from single-cell expression data. We reviewed the code and data and found six compounding methodological problems — none previously reported — that together call the reported performance into serious question and, more critically, suggest the model may be learning to detect treatment effects rather than predict response.
+  </p>
+
+  <h2>Background</h2>
+
+  <p>
+    The pipeline trains an XGBoost classifier on single-cell expression data from patient biopsies to predict whether patients will respond to therapy. It uses Boruta for feature selection, a reinforcement learning step to refine cell-level labels, and leave-one-out cross-validation (LOO-CV) to report performance. The paper reports a LOO AUC of ~0.84 and identifies a small predefined gene signature as predictive.
+  </p>
+
+  <p>
+    The dataset comprises ~30 patients, ~50 biopsy samples (Pre- and Post-treatment, with some patients having replicate biopsies), and — in the full analysis — ~16,000 cells. Critically, response to therapy is a <strong>patient-level clinical outcome</strong>: a patient either responds or does not.
+  </p>
+
+  <h2>The Six Findings</h2>
+
+  <div class="finding">
+    <div class="finding-header">
+      <span class="finding-number">Finding 1</span>
+      <div>
+        <h3>Cross-validation leaks same-patient data across train and test <span class="severity-tag severity-moderate">Moderate</span></h3>
+      </div>
+    </div>
+
+    <p>
+      The cross-validation in the prediction script stratifies folds by <em>sample</em> (e.g., <code>Pre_P1</code>, <code>Post_P1</code>) rather than by <em>patient</em>. Roughly 40% of patients have multiple biopsies — Pre- and Post-treatment, or duplicate biopsies at the same timepoint. When <code>Post_P1</code> is held out as the test fold, <code>Pre_P1</code> and <code>Post_P1_2</code> — cells from the same patient, the same tumor, with the same response label — remain in the training set.
+    </p>
+
+    <p>
+      This is a fundamental data leakage problem. A model trained on cells from Patient 1's pre-treatment biopsy is not being fairly evaluated when tested on Patient 1's post-treatment biopsy. The two samples share genetic background, tumor-intrinsic features, and correlated gene expression profiles. The model can learn patient-specific expression patterns and exploit them at test time.
+    </p>
+
+    <p>
+      About 60% of samples come from multi-sample patients, so the majority of LOO folds are contaminated. We re-ran the evaluation with proper patient-level leave-one-out (holding out <em>all</em> samples from a patient together) and measured an AUC drop of approximately 8 percentage points — confirmed by rerunning the classification pipeline.
+    </p>
+
+    <p><strong>Fix:</strong> Use <code>GroupKFold</code> or <code>LeaveOneGroupOut</code> with <code>patient_id</code> as the grouping variable, ensuring no patient's cells appear in both training and test.</p>
+  </div>
+
+
+  <div class="finding">
+    <div class="finding-header">
+      <span class="finding-number">Finding 2</span>
+      <div>
+        <h3>Four patients have contradictory response labels <span class="severity-tag severity-moderate">Moderate</span></h3>
+      </div>
+    </div>
+
+    <p>
+      Therapy response (assessed by standard clinical criteria) is a patient-level clinical determination — a patient either meets the threshold for response or does not. It should not vary across biopsies from the same patient. Yet four patients in the dataset are assigned different response labels depending on which sample is examined:
+    </p>
+
+    <table>
+      <thead>
+        <tr><th>Patient</th><th>Sample</th><th>Response label</th><th>Problem</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>P1</td><td>Post_P1_2</td><td>0 (Non-responder)</td><td>Other P1 samples = 1</td></tr>
+        <tr><td>P2</td><td>Post_P2</td><td>1 (Responder)</td><td>Pre_P2 = 0</td></tr>
+        <tr><td>P3</td><td>Post_P3_2</td><td>1 (Responder)</td><td>Post_P3 = 0 — <em>same timepoint</em></td></tr>
+        <tr><td>P4</td><td>Pre_P4</td><td>1 (Responder)</td><td>Both Post_P4 = 0</td></tr>
+      </tbody>
+    </table>
+
+    <p>
+      Patient P3 is the most striking case: two samples collected at the same timepoint receive opposite labels. This is either a data entry error or indicates the response variable encodes something other than standard clinical response — something the paper does not disclose.
+    </p>
+
+    <p>
+      These four patients contribute roughly 17% of the dataset's cells. The model is trained on contradictory supervision signals for their cells. When these patients also appear in both training and test folds (see Finding 1), the training label for one biopsy directly contradicts the test label for another.
+    </p>
+  </div>
+
+
+  <div class="finding">
+    <div class="finding-header">
+      <span class="finding-number">Finding 3</span>
+      <div>
+        <h3>Feature selection sees the full dataset before cross-validation <span class="severity-tag severity-moderate">Moderate</span></h3>
+      </div>
+    </div>
+
+    <p>
+      The Boruta feature selection step is run on the entire dataset — all cells from all patients, including those that will later be used as test samples — before any cross-validation split is performed. The paper's Methods section states that feature selection was performed "in a leave-one-out fashion" to avoid leakage, but the code does not implement this: Boruta is fit on the complete cell matrix.
+    </p>
+
+    <p>
+      This is a classic form of optimistic bias in high-dimensional genomics. When feature selection sees the test samples, it can identify features that correlate with response across the full dataset. Subsequent evaluation on those same samples is not independent: the feature set has already been tuned to them. In settings with thousands of features — the pipeline uses ~10,000 — feature selection leakage typically inflates AUC by 5–15%.
+    </p>
+
+    <p>
+      The selected features are then passed to the reinforcement learning step (Finding 5), compounding the leakage further.
+    </p>
+
+    <p><strong>Fix:</strong> Nest Boruta inside the cross-validation loop, running it separately on each fold's training data and evaluating the fold's test data using only that fold's selected features.</p>
+  </div>
+
+
+  <div class="finding">
+    <div class="finding-header">
+      <span class="finding-number">Finding 4</span>
+      <div>
+        <h3>Cells from the same patient are treated as independent observations <span class="severity-tag severity-moderate">Moderate</span></h3>
+      </div>
+    </div>
+
+    <p>
+      The classifier trains on individual cells, with each cell receiving its patient's response label. In the dataset, every sample contains exactly 25 cells — meaning a patient with two biopsies contributes 50 cells, all with identical labels. These cells are treated as 50 independent observations during model training.
+    </p>
+
+    <p>
+      They are not independent. Cells from the same patient share the same genetic background, tumor microenvironment, treatment history, and most of the gene expression variation that makes them distinguishable from other patients' cells. Training on ~1,200 cells inflates the apparent sample size from ~30 patients to ~1,200 observations. This allows the model to overfit to patient-specific expression signatures rather than learning generalizable response biology.
+    </p>
+
+    <p>
+      The code does aggregate predictions back to the sample level at evaluation time (taking the mean prediction across a sample's cells), which is the right approach for evaluation. But the training still treats cells as independent, biasing feature selection and model fitting toward patient-discriminating signal.
+    </p>
+
+    <p>
+      When we re-ran the pipeline with features aggregated to the sample level before training (pseudobulk approach), and combined this with proper patient-level CV (Finding 1), AUC dropped from ~0.84 to ~0.70 — a 17-percentage-point reduction.
+    </p>
+
+    <p><strong>Fix:</strong> Aggregate cell-level features to sample-level pseudobulk profiles before training, or use sample weights inversely proportional to the number of cells per sample.</p>
+  </div>
+
+
+  <div class="finding">
+    <div class="finding-header">
+      <span class="finding-number">Finding 5</span>
+      <div>
+        <h3>Reinforcement learning label refinement is not nested inside cross-validation <span class="severity-tag severity-moderate">Moderate</span></h3>
+      </div>
+    </div>
+
+    <p>
+      The pipeline uses a reinforcement learning (RL) step to refine binary patient-level response labels into continuous cell-level scores, aiming to identify which cells within a biopsy are most informative. This is a methodologically interesting idea. The problem is where in the pipeline it runs.
+    </p>
+
+    <p>
+      The RL procedure is run on the full dataset before cross-validation begins. It uses a leave-one-<em>sample</em>-out scheme internally, but — like the main CV (Finding 1) — does not hold out all samples from a patient simultaneously. After hundreds of iterations, the RL output (refined per-cell scores) is used for downstream feature selection and classification.
+    </p>
+
+    <p>
+      Because the RL step has seen every patient's data during its refinement, the cell-level scores it produces encode information from the test samples. These scores are then used as input to the prediction pipeline, creating a second layer of leakage on top of the feature selection leakage in Finding 3.
+    </p>
+
+    <p>
+      Additionally, the default feature list hardcoded in the RL module is exactly the paper's predefined gene signature — meaning the RL step ignores whatever Boruta actually selects and uses pre-specified genes regardless. This makes the described Boruta → RL workflow non-operative as implemented.
+    </p>
+
+    <p><strong>Fix:</strong> Nest the complete RL procedure inside each fold of the outer cross-validation, running it only on that fold's training patients and using the trained RL model only to score that fold's test cells.</p>
+  </div>
+
+
+  <div class="finding">
+    <div class="finding-header">
+      <span class="finding-number">Finding 6</span>
+      <div>
+        <h3>Top predictive genes are treatment-response markers, not pre-treatment predictors <span class="severity-tag severity-moderate">Moderate</span></h3>
+      </div>
+    </div>
+
+    <p>
+      The paper's predictive gene signature consists predominantly of canonical interferon-stimulated genes (ISGs) and cytotoxic immune activation markers — genes that are mechanistically upregulated by the therapy itself in patients whose tumors are being attacked by the immune system.
+    </p>
+
+    <p>
+      The dataset mixes Pre-treatment and Post-treatment biopsies without any batch correction or timepoint adjustment. Non-responders in the dataset are disproportionately represented by Post-treatment samples (~70% Post vs ~50% Post for responders). A model trained on this data without controlling for timepoint will learn that high expression of immune-activation genes predicts response — which is true, but only because responders' Post-treatment biopsies reflect active immune killing.
+    </p>
+
+    <p>
+      This is a fundamental problem for the paper's clinical claims. The pipeline is presented as a tool for <em>prospective patient selection</em> — deciding, before treatment begins, which patients are likely to benefit from therapy. A predictor that detects post-treatment immune activation cannot serve this purpose: the signal it relies on does not exist at the time the clinical decision must be made.
+    </p>
+
+    <blockquote>
+      If the model works by detecting the immune response to treatment rather than predicting who will respond to treatment, its reported AUC is a measure of how well it distinguishes immune-activated Post-treatment biopsies from others — not a measure of clinically actionable pre-treatment prediction.
+    </blockquote>
+
+    <p>
+      A direct test would be to restrict the analysis to Pre-treatment biopsies only (a few hundred cells across ~20 samples) and measure how much predictive power survives.
+    </p>
+  </div>
+
+
+  <div class="impact-box">
+    <h2>Combined Impact</h2>
+
+    <p>
+      The six findings do not operate independently — they compound. The reported LOO AUC of ~0.84 reflects a pipeline where:
+    </p>
+
+    <ul style="margin: 12px 0 16px 24px; font-size: 0.97rem;">
+      <li style="margin-bottom: 8px;">Feature selection was optimized on all patients, including those later used as test cases (Finding 3 + 5)</li>
+      <li style="margin-bottom: 8px;">~60% of test folds contain same-patient training cells (Finding 1)</li>
+      <li style="margin-bottom: 8px;">~1,200 correlated cell observations are treated as independent (Finding 4)</li>
+      <li style="margin-bottom: 8px;">~17% of cells carry potentially incorrect labels (Finding 2)</li>
+      <li style="margin-bottom: 8px;">The dominant signal may reflect treatment effect rather than intrinsic response biology (Finding 6)</li>
+    </ul>
+
+    <p>
+      Correcting Findings 1 and 4 together (patient-level CV + pseudobulk features) reduced AUC from ~0.84 to ~0.70 in our re-analysis — a 17-percentage-point drop — and this correction alone does not yet address the Boruta leakage, RL leakage, or Pre/Post confounding. A fully corrected pipeline would likely show further reduction.
+    </p>
+
+    <p>
+      More fundamentally, if Finding 6 holds — if the predictive genes are immune-activation markers driven by active response to therapy rather than pre-existing tumor biology — then the corrected AUC on Pre-treatment biopsies alone may be close to chance, and the entire premise of prospective patient selection is not supported by this data.
+    </p>
+
+    <table>
+      <thead>
+        <tr><th>#</th><th>Finding</th><th>Impact</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td>Patient-level CV leakage</td><td class="impact-moderate">Moderate — ~8% AUC inflation (confirmed by rerun)</td></tr>
+        <tr><td>2</td><td>Contradictory response labels (4 patients, ~17% of data)</td><td class="impact-moderate">Moderate — corrupted supervision signal</td></tr>
+        <tr><td>3</td><td>Boruta feature selection on full dataset</td><td class="impact-moderate">Moderate — 5–15% optimistic bias (literature estimate)</td></tr>
+        <tr><td>4</td><td>Pseudoreplication — cells as independent observations</td><td class="impact-moderate">Moderate — combined ~17% drop with Finding 1 (confirmed by rerun)</td></tr>
+        <tr><td>5</td><td>RL label refinement not nested inside CV</td><td class="impact-moderate">Moderate — second-layer leakage on top of F3</td></tr>
+        <tr><td>6</td><td>Top features are post-treatment immune-activation genes</td><td class="impact-moderate">Moderate — clinical utility for prospective selection unverified</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+
+  <h2>What Should Be Done</h2>
+
+  <p>
+    These are all correctable problems. A revised analysis should:
+  </p>
+
+  <ol style="margin: 12px 0 24px 24px;">
+    <li style="margin-bottom: 10px;"><strong>Fix the CV design</strong> — group patients, not samples, into folds. Every sample from a patient must be in the same fold.</li>
+    <li style="margin-bottom: 10px;"><strong>Reconcile response labels</strong> — assign a single clinical response label per patient, verified against the source clinical data.</li>
+    <li style="margin-bottom: 10px;"><strong>Nest feature selection inside CV</strong> — Boruta and the RL refinement step must run only on each fold's training patients.</li>
+    <li style="margin-bottom: 10px;"><strong>Use pseudobulk features</strong> — aggregate cell-level expression to sample-level before training to eliminate pseudoreplication.</li>
+    <li style="margin-bottom: 10px;"><strong>Test on Pre-treatment biopsies only</strong> — a separate analysis restricted to pre-treatment samples is necessary to establish whether the model has any prospective predictive value.</li>
+  </ol>
+
+  <p>
+    None of these corrections are exotic — they are standard practice for cross-validation with hierarchical biological data (cells nested in patients). The question of whether a properly corrected pipeline still shows meaningful performance on Pre-treatment biopsies alone is an interesting one, and worth answering.
+  </p>
+
+
+  <div class="disclaimer">
+    <strong>Note:</strong> This is an anonymized example of an audit produced by Natural Joints. The specific paper, indication, drug class, journal, repository, and gene identifiers have been removed; the methodology, structural findings, and quantitative impact estimates are preserved from the original audit. We share examples like this so research and pharma teams can see what an automated audit catches before deciding to send their own pipeline as a test case. To request a private audit, email <a href="mailto:ran@natural-joints.com">ran@natural-joints.com</a>.
+  </div>
+
+  <footer>
+    <p>Anonymized example audit · 2026</p>
+  </footer>
+
+</div>
+</body>
+</html>
